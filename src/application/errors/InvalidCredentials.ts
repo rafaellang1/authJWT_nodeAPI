@@ -1,3 +1,3 @@
 export class InvalidCredentials extends Error {
-  name = 'Invalid Credentials';
+  name = 'InvalidCredentials';
 }

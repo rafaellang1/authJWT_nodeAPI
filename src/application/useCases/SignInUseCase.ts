@@ -1,26 +1,26 @@
 import { compare } from 'bcryptjs';
 import { sign } from 'jsonwebtoken';
-
+import { InvalidCredentials } from '../errors/InvalidCredentials';
 import { env } from '../config/env';
 import { prismaClient } from '../libs/prismaClient';
-import { InvalidCredentials } from "../errors/InvalidCredentials";
 
 interface IInput {
-  email: string,
-  password: string,
+  email: string;
+  password: string;
 }
 
 interface IOutput {
-  accessToken: string;
+  accessToken: string
 }
 
 export class SignUpUseCase {
   async execute({ email, password }: IInput): Promise<IOutput> {
+
     const account = await prismaClient.account.findUnique({
       where: { email },
     });
 
-    if(!account) {
+    if (!account) {
       throw new InvalidCredentials();
     }
 
@@ -30,8 +30,6 @@ export class SignUpUseCase {
       throw new InvalidCredentials();
     }
 
-    // Ok, o email existe, a senha é valida então:
-    // Gerar o token JWT
     const accessToken = sign(
       { sub: account.id },
       env.jwtSecret,
@@ -40,7 +38,6 @@ export class SignUpUseCase {
 
     return {
       accessToken,
-    }
-
+    };
   }
 }

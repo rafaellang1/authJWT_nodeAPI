@@ -1,6 +1,6 @@
-import { hash } from "bcryptjs";
-import { AccountAlreadyExists } from "./errors/AccountAlreadyExists";
-import { prismaClient } from "./libs/prismaClient";
+import { hash } from 'bcryptjs';
+import { AccountAlreadyExists } from '../errors/AccountAlreadyExists';
+import { prismaClient } from '../libs/prismaClient';
 
 interface IInput {
   name: string;
@@ -21,7 +21,7 @@ export class SignUpUseCase {
       throw new AccountAlreadyExists();
     }
 
-    const hashedPassword = await hash(password, 10) // 10 é o tempo para gerar a hash e ler
+    const hashedPassword = await hash(password, 10); // 10 é o tempo para gerar a hash e ler
 
     await prismaClient.account.create({
       data: {
