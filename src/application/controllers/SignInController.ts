@@ -1,29 +1,31 @@
 import { z, ZodError } from 'zod';
 
 import { IController, IRequest, IResponse } from '../interfaces/iController';
-import { SignUpUseCase } from '../useCases/SignUpUseCase';
+import { SignInUseCase } from '../useCases/SignInUseCase';
 import { InvalidCredentials } from '../errors/InvalidCredentials';
 
 //usando zod para validar os objetos
 const schema = z.object({
-  name: z.string().min(2),
   email: z.string().email().min(1),
   password: z.string().min(8),
 });
 
-export class SignUnController implements IController {
-  constructor(private readonly signUpUseCase: SignUpUseCase) {}
+export class SignInController implements IController {
+  constructor(private readonly SignInUseCase: SignInUseCase) {}
 
   async handle({ body }: IRequest): Promise<IResponse> {
     try {
-      const { email, name, password } = schema.parse(body);
+      const { email, password } = schema.parse(body);
 
-      await this.signUpUseCase.execute({ email, name, password });
+      const { accessToken} = await this.SignInUseCase.execute({ email, password });
 
       return {
         statusCode: 204,
-        body: null,
+        body: {
+          accessToken,
+        },
       };
+
     } catch (error) {
       if (error instanceof ZodError) {
         return {
@@ -34,12 +36,13 @@ export class SignUnController implements IController {
 
       if (error instanceof InvalidCredentials) {
         return {
-          statusCode: 409,
+          statusCode: 401,
           body: {
-            error: 'This email already in use',
+            error: 'Invalid Credentials',
           },
         };
       }
+
       throw error;
     }
   }
