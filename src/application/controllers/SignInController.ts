@@ -20,7 +20,7 @@ export class SignInController implements IController {
       const { accessToken} = await this.SignInUseCase.execute({ email, password });
 
       return {
-        statusCode: 204,
+        statusCode: 200,
         body: {
           accessToken,
         },

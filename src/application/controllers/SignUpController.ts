@@ -2,7 +2,7 @@ import { z, ZodError } from 'zod';
 
 import { IController, IRequest, IResponse } from '../interfaces/iController';
 import { SignUpUseCase } from '../useCases/SignUpUseCase';
-import { InvalidCredentials } from '../errors/InvalidCredentials';
+import { AccountAlreadyExists } from '../errors/AccountAlreadyExists';
 
 //usando zod para validar os objetos
 const schema = z.object({
@@ -11,7 +11,7 @@ const schema = z.object({
   password: z.string().min(8),
 });
 
-export class SignUnController implements IController {
+export class SignUpController implements IController {
   constructor(private readonly signUpUseCase: SignUpUseCase) {}
 
   async handle({ body }: IRequest): Promise<IResponse> {
@@ -32,7 +32,7 @@ export class SignUnController implements IController {
         };
       }
 
-      if (error instanceof InvalidCredentials) {
+      if (error instanceof AccountAlreadyExists) {
         return {
           statusCode: 409,
           body: {
